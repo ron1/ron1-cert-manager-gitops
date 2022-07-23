@@ -1,6 +1,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "3000"
   name: cert-manager-merge
 spec:
   generators:
@@ -38,6 +40,7 @@ spec:
         appset: cert-manager-merge
         environmentId: '{{metadata.labels.environmentId}}'
       annotations:
+        argocd.argoproj.io/sync-wave: "3000"
         version: '{{values.path}}'
     spec:
       project: cert-manager
