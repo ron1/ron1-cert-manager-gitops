@@ -1,0 +1,69 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cert-manager-merge
+spec:
+  generators:
+    - merge:
+        mergeKeys:
+          - name
+        generators:
+          - clusters:
+              selector:
+                matchLabels:
+                  environmentId: dev
+                matchExpressions:
+                  - key: cluster
+                    operator: NotIn
+                    values:
+                      - vcluster-10
+              values:
+                path: cert-manager/1.8.2
+          - clusters:
+              selector:
+                matchLabels:
+                  bu: ip
+              values:
+                path: cert-manager/1.9.0
+          - list:
+              elements:
+                - name: vcluster-15
+                  url: ''
+                  values:
+                    path: cert-manager/1.9.0
+  template:
+    metadata:
+      name: 'cert-manager-me-{{name}}'
+      labels:
+        appset: cert-manager-merge
+        environmentId: '{{metadata.labels.environmentId}}'
+      annotations:
+        version: '{{values.path}}'
+    spec:
+      project: cert-manager
+      source:
+        helm:
+          fileParameters:
+            - path: values.yaml
+        repoURL: 'https://github.com/ron1/ron1-cert-manager-gitops.git'
+        targetRevision: HEAD
+        path: '{{values.path}}'
+      destination:
+        name: '{{name}}'
+        namespace: cert-manager
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+          allowEmpty: false
+        syncOptions:
+          - Validate=true
+          - PrunePropagationPolicy=foreground
+          - CreateNamespace=true
+          - PruneLast=true
+        retry:
+          limit: 2
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
