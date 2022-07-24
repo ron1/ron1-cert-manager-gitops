@@ -56,14 +56,14 @@ spec:
         namespace: cert-manager
       syncPolicy:
         automated:
-          prune: true
+          prune: false
           selfHeal: true
           allowEmpty: false
         syncOptions:
           - Validate=true
           - PrunePropagationPolicy=foreground
           - CreateNamespace=true
-          - PruneLast=true
+          - PruneLast=false
         retry:
           limit: 2
           backoff:
