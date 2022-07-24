@@ -15,7 +15,7 @@ spec:
                 matchLabels:
                   environmentId: dev
                 matchExpressions:
-                  - key: cluster
+                  - key: clusterId
                     operator: NotIn
                     values:
                       - vcluster-10
