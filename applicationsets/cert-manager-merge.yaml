@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   annotations:
-    argocd.argoproj.io/sync-wave: "3000"
+    argocd.argoproj.io/sync-wave: "3600"
   name: cert-manager-merge
 spec:
   generators:
@@ -40,7 +40,7 @@ spec:
         appset: cert-manager-merge
         environmentId: '{{metadata.labels.environmentId}}'
       annotations:
-        argocd.argoproj.io/sync-wave: "3000"
+        argocd.argoproj.io/sync-wave: "3600"
         version: '{{values.path}}'
     spec:
       project: cert-manager
@@ -72,8 +72,8 @@ spec:
             maxDuration: 3m
       # https://github.com/argoproj/argo-cd/issues/4276
       ignoreDifferences:
-        - group: admissionregistration.k8s.io
-          kind: ValidatingWebhookConfiguration
-          name: 'cert-manager-me-{{name}}-webhook'
-          jsonPointers:
-            - /webhooks
+      - group: admissionregistration.k8s.io
+        kind: ValidatingWebhookConfiguration
+        name: 'cert-manager-me-{{name}}-webhook'
+        jsonPointers:
+        - /webhooks

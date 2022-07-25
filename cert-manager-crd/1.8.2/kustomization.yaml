@@ -1,0 +1,60 @@
+helmCharts:
+- name: cert-manager
+  includeCRDs: true
+  valuesInline:
+    global:
+      rbac:
+        create: false
+    installCRDs: true
+    serviceAccount:
+      create: false
+    prometheus:
+      enabled: false
+    webhook:
+      serviceAccount:
+        create: false
+    cainjector:
+      enabled: false
+    startupapicheck:
+      enabled: false
+  releaseName: cert-manager
+  version: 1.8.2
+  repo: https://charts.jetstack.io
+
+patchesStrategicMerge:
+- |-
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: cert-manager-webhook
+  $patch: delete
+- |-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: cert-manager-webhook
+  $patch: delete
+- |-
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: cert-manager
+  $patch: delete
+- |-
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: cert-manager-webhook
+  $patch: delete
+- |-
+  apiVersion: admissionregistration.k8s.io/v1
+  kind: MutatingWebhookConfiguration
+  metadata:
+    name: cert-manager-webhook
+  $patch: delete
+- |-
+  apiVersion: admissionregistration.k8s.io/v1
+  kind: ValidatingWebhookConfiguration
+  metadata:
+    name: cert-manager-webhook
+  $patch: delete

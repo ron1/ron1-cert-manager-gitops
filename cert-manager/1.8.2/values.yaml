@@ -1,4 +1,4 @@
-installCRDs: True
+installCRDs: false
 prometheus:
   servicemonitor:
     enabled: true
