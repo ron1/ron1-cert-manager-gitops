@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   annotations:
-    argocd.argoproj.io/sync-wave: "3400"
+    argocd.argoproj.io/sync-wave: "4001"
   name: cert-manager-crd-merge
 spec:
   generators:
@@ -18,7 +18,7 @@ spec:
                   - key: clusterId
                     operator: NotIn
                     values:
-                      - vcluster-10
+                      - in-cluster-local
               values:
                 path: cert-manager-crd/1.8.2
           - clusters:
@@ -38,9 +38,10 @@ spec:
       name: 'cert-manager-crd-me-{{name}}'
       labels:
         appset: cert-manager-crd-merge
+        clusterId: '{{metadata.labels.clusterId}}'
         environmentId: '{{metadata.labels.environmentId}}'
       annotations:
-        argocd.argoproj.io/sync-wave: "3400"
+        argocd.argoproj.io/sync-wave: "4001"
         version: '{{values.path}}'
     spec:
       project: cert-manager
